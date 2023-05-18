@@ -4,7 +4,7 @@
 ## Integrantes:
 * Ibarrola Camila.
 
-![montacargas](https://github.com/IbarrolaCamila/Proyecto-Estacion-de-Subte-Arduino/blob/main/img/DOJO2.png "montacargas")
+![montacargas](https://github.com/IbarrolaCamila/Proyecto-Montacargas-Arduino/blob/master/img/montacargas.png"montacargas")
 
 ## Descripción:
 
