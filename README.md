@@ -4,7 +4,7 @@
 ## Integrantes:
 * Ibarrola Camila.
 
-![montacargas](https://github.com/IbarrolaCamila/Proyecto-Montacargas-Arduino/blob/master/img/montacargas.png"montacargas")
+![montacargas](https://github.com/IbarrolaCamila/Proyecto-Montacargas-Arduino/blob/master/img/montacargas.png)
 
 ## Descripción:
 
