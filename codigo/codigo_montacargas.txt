@@ -1,0 +1,119 @@
+/*
+--CAMILA IBARROLA--
+*/
+#define LED_ROJO 12
+#define LED_VERDE 13
+
+# define PULSADORUNO 9
+# define PULSADORDOS 10
+# define PULSADORTRES 0
+
+bool inicio = true; 
+int piso_actual = 0; 
+int intervalos_pausa = 30; // iteraciones del while
+int ping_pausar = 3000/intervalos_pausa; // tiempo de delay del while
+int demora_led = 400; // tiempo delay para las led
+
+void setup() {
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(PULSADORUNO, INPUT);
+  pinMode(PULSADORDOS, INPUT);
+  pinMode(PULSADORTRES, INPUT);
+  Serial.begin(9600);
+  DDRD = DDRD | 0b11111100;
+  DDRB = DDRB | 0b00000001;
+}
+
+void loop() {
+  
+  int subir = digitalRead(PULSADORUNO);
+  int bajar = digitalRead(PULSADORDOS);
+  
+  if (inicio){
+  	segmento(piso_actual);
+    inicio = false;
+  }
+  subir_bajar(subir, bajar);
+}
+
+int matriz_segmento[] = {
+  // bafgcde
+  0b01110111, //   "0"       
+  0b01000100, //   "1"       
+  0b01101011, //   "2"       
+  0b01101110, //   "3"       
+  0b01011100, //   "4"       
+  0b00111110, //   "5"       
+  0b00111111, //   "6"       
+  0b01100100, //   "7"
+  0b01111111, //   "8"
+  0b01111110, //   "9"
+}; // valor binario de un dígito del 0 al 9 para el display de 7 segmentos
+
+void segmento(int numero) {
+  PORTD = matriz_segmento[numero] << 2;
+  PORTB = matriz_segmento[numero] >> 6;
+} // configura los puertos de salida para el 7 segmentos
+
+int piso_montacarga(int piso, const char* accion){
+  if (accion == "bajar"){
+    if (piso <= 0){
+      piso = 0; 
+    }else if (piso > 0 && piso < 10){
+      piso--;
+    }
+  }else if (accion == "subir"){
+    if (piso >= 9){
+      piso = 9;
+    }else if (piso >= 0 && piso < 9){
+      piso++;
+    }
+  }
+  return piso;
+} // verifica, valida y luego retorna el piso que corresponda segun la accion
+
+bool verificar_pausa(){
+  int contador = 0;
+  bool check = false;
+  
+  Serial.println("ingresando al check");
+  
+  while (contador <= intervalos_pausa){
+   delay(ping_pausar);
+   if (digitalRead(PULSADORTRES) == LOW){
+     Serial.println("Pausando");
+     digitalWrite(LED_ROJO, HIGH);
+     check = true;
+     break;
+   }
+    contador++;
+  }
+  return check;
+} // Verifica el pulsador pausar y retorna un bool
+
+void subir_bajar(int pulsador, int pulsador2){
+  if (pulsador == LOW) {
+    if (verificar_pausa() == false){
+      digitalWrite(LED_ROJO, LOW);
+      piso_actual = piso_montacarga(piso_actual, "subir");
+      Serial.println("subiendo");
+      digitalWrite(LED_VERDE, HIGH);
+      delay(demora_led);
+      segmento(piso_actual);
+     }
+  }
+  if (pulsador2 == LOW) {
+    if (verificar_pausa() == false){
+      digitalWrite(LED_ROJO, LOW);
+      piso_actual = piso_montacarga(piso_actual, "bajar");
+      Serial.println("bajando");
+      digitalWrite(LED_VERDE, HIGH);
+      delay(demora_led);
+      segmento(piso_actual);
+    }
+  }
+} // sube, baja o mantiene el piso actual del montacarga
+  
+ 
+  
